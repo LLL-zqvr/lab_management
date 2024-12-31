@@ -1,4 +1,5 @@
 //role
 
-export const TEACHER = "ikp1";
-export const ADMIN = "yumu";
+export const TEACHER = 'Js09'
+export const ADMIN = 'Sj08'
+export const LABADMIN = "lM07";

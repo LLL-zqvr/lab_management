@@ -1,5 +1,6 @@
 import type { ResultVO } from "@/types";
 import axios from "axios";
+import { ElMessage } from "element-plus";
 
 // 配置了 axios.defaults.baseURL，默认使用 /api/ 作为基地址。
 axios.defaults.baseURL = "/api/";
@@ -64,19 +65,22 @@ axios.interceptors.response.use(
     if (data.code < 300) {
       // 将resp.data转成对象
       // parseObject(resp.data);
-      console.log("这里是登陆成功~");
+      //console.log("这里是登陆成功~");
       // console.log(resp);
       // console.log(resp.data);
+      // ElMessage.success("登录成功！！")
       return resp;
     }
 
     if (data.code >= 400) {
+      //ElMessage.error( data.message);
       return Promise.reject(data.message);
     }
     return resp;
   },
   // 全局处理异常信息。即，http状态码不是200
   (error) => {
+     ElMessage.error("error!!!")
     return Promise.reject(error.message);
   }
 );
