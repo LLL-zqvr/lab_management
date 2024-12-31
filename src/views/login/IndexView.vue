@@ -57,6 +57,7 @@
 import { ref } from "vue";
 import type { RuleForm } from "@/types/index";
 import type { ComponentSize, FormInstance, FormRules } from "element-plus";
+import { CommonService } from "@/services";
 // import { login } from "@/api/login";
 
 //数据
@@ -107,7 +108,10 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      // const res = await login(form.value);
+      const res = await CommonService.loginService({
+        account: form.value.account,
+        password: form.value.password,
+      });
       // console.log(res);
       // console.log("submit!");
       // console.log()
@@ -116,6 +120,19 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
     }
   });
 };
+// const handleLogin = async (formEl: FormInstance | undefined) => {
+//   if (!formEl) return;
+//   await formEl.validate(async (valid, fields) => {
+//     if (valid) {
+//       // const res = await login(form.value);
+//       // console.log(res);
+//       // console.log("submit!");
+//       // console.log()
+//     } else {
+//       console.log("error submit!", fields);
+//     }
+//   });
+// };
 </script>
 
 <style scoped>
