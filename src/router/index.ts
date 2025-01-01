@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory,createWebHashHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  createWebHashHistory,
+} from "vue-router";
 import * as consty from "@/services/Const";
 import { CommonService } from "@/services/index";
 // 第二步：创建路由器
@@ -8,76 +12,79 @@ const router = createRouter({
   history: createWebHashHistory(), //路由器的工作模式
   routes: [
     {
-      path: '/login',
-      component: () => import('@/views/login/IndexView.vue')
+      path: "/login",
+      component: () => import("@/views/login/IndexView.vue"),
     },
     {
-      path: '/',
-      component: () => import('@/views/main/IndexView.vue'),
+      path: "/",
+      component: () => import("@/views/main/IndexView.vue"),
       meta: {
-        roles: [consty.ADMIN,consty.TEACHER,consty.LABADMIN]
+        roles: [consty.ADMIN, consty.TEACHER, consty.LABADMIN],
       },
       children: [
         {
-          path: '/settings',
-          component: () => import('@/views/main/UserSettingView.vue'),
-          // meta: {
-          //   roles: [consty.ADMIN,consty.TEACHER,consty.LABADMIN]
-          // }
+          path: "/settings",
+          component: () => import("@/views/main/UserSettingView.vue"),
         },
         {
-          path: '/admin',
-          component: () => import('@/views/main/admin/IndexView.vue'),
+          path: "/admin",
+          component: () => import("@/views/main/admin/IndexView.vue"),
           meta: {
-            roles: [consty.ADMIN]
-          }
+            roles: [consty.ADMIN],
+          },
         },
         {
-          path: '/teacher',
-          component: () => import('@/views/main/teacher/IndexView.vue'),
+          path: "/teacher",
+          component: () => import("@/views/main/teacher/IndexView.vue"),
           meta: {
-            roles: [consty.TEACHER]
+            roles: [consty.TEACHER],
           },
           children: [
             {
-              path: 'teacher-home',
-              component: () => import('@/components/home/TeacherHome.vue')
+              path: "teacherhome",
+              component: () => import("@/components/home/TeacherHome.vue"),
             },
             {
-              path: 'course',
-              component: () => import('@/components/course/CourseManagement.vue')
+              path: "course",
+              component: () =>
+                import("@/components/course/CourseManagement.vue"),
             },
             {
-              path: 'course-appointment',
-              component: () => import('@/components/appointment/CourseAppointment.vue')
+              path: "courseappointment",
+              component: () =>
+                import("@/components/appointment/CourseAppointment.vue"),
             },
             {
-              path: 'tem-appointment',
-              component: () => import('@/components/appointment/TemAppointment.vue')
+              path: "temappointment",
+              component: () =>
+                import("@/components/appointment/TemAppointment.vue"),
             },
             {
-              path: 'current-appointment',
-              component: () => import('@/components/currentAppointment/CurrentAppointment.vue')
+              path: "currentappointment",
+              component: () =>
+                import(
+                  "@/components/currentAppointment/CurrentAppointment.vue"
+                ),
             },
             {
-              path: 'look-news',
-              component: () => import('@/components/news/LookNews.vue')
-            }
-          ]
+              path: "looknews",
+              component: () => import("@/components/news/LookNews.vue"),
+            },
+          ],
         },
         {
-          path: '/lab-manager',
-          component: () => import('@/views/main/labManager/IndexView.vue'),
+          path: "/labadmin",
+          component: () => import("@/views/main/labadmin/IndexView.vue"),
           meta: {
-            roles: [consty.LABADMIN]
-          }
-        }
-      ]
+            roles: [consty.LABADMIN],
+          },
+        },
+      ],
     },
     {
-      path: '/:pathMatch(.*)*',
-      redirect: '/login'
-    }
+      path: "/:pathMatch(.*)*",
+      redirect: "/login",
+    },
     //一个一个的路由规则
     // {
     //   name: "home",
@@ -102,12 +109,13 @@ const router = createRouter({
     //   path: "/",
     //   redirect: "/login",
     // },
-  ]
-})
+  ],
+});
 
 //beforeEach()全局前置守卫
 router.beforeEach((to) => {
   console.log("这里是全局前置守卫！！");
+  console.log(to);
   // 断言，roles就是数组，防止其识别不出
   const roles = to.meta.roles as string[] | undefined;
   console.log(roles);
@@ -118,9 +126,20 @@ router.beforeEach((to) => {
   }
   // 排除，
   const role = roles.find((r) => r == CommonService.getRole());
-  console.log("角色为："+ role);
+  console.log("角色为：" + role);
   if (role) {
     console.log("排除路径");
+    if (to.path == "/") {
+      if (role == consty.TEACHER) {
+        return "/teacher/teacherhome";
+      }
+      if (role == consty.ADMIN) {
+        return "/admin";
+      }
+      if (role == consty.LABADMIN) {
+        return "/labadmin";
+      }
+    }
     return true;
   }
   console.log("到这里？");

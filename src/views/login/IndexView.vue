@@ -32,7 +32,7 @@
           <span class="lab-span">实验室预约系统</span>
           <img
             class="lab-image"
-            src="../../../img/sys.jpg"
+            src="../../../img/实验室管理系统宣传封面.jpg"
             alt=""
           />
         </div>
@@ -56,7 +56,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { RuleForm } from "@/types/index";
-import { ElMessage, type ComponentSize, type FormInstance, type FormRules } from "element-plus";
+import {
+  ElMessage,
+  type ComponentSize,
+  type FormInstance,
+  type FormRules,
+} from "element-plus";
 import { CommonService } from "@/services";
 import { fi } from "element-plus/es/locales.mjs";
 // import { login } from "@/api/login";
@@ -66,8 +71,8 @@ import { fi } from "element-plus/es/locales.mjs";
 const isLogin = ref(false);
 const ruleFormRef = ref<FormInstance>();
 const form = ref({
-  account: "2022222979",
-  password: "2022222979",
+  account: "2333333333",
+  password: "123456",
 });
 
 const rules = ref<FormRules<RuleForm>>({

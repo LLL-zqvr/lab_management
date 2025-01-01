@@ -1,7 +1,7 @@
 // 基于axios的http请求封装
 import axios, { useGet, usePatch, usePost } from "@/axios";
 import router from "@/router";
-import { ADMIN, TEACHER,LABADMIN } from "@/services/Const";
+import { ADMIN, TEACHER, LABADMIN } from "@/services/Const";
 import { useUserStore } from "@/stores/UserStore";
 // import { useProcessStore } from "@/stores/ProcessStore";
 import type { ResultVO, User } from "@/types";
@@ -22,7 +22,7 @@ export class CommonService {
     const token = resp.headers.token;
     const role = resp.headers.role;
     console.log(",,,," + role);
-    const message = resp.data.message
+    const message = resp.data.message;
     //console.log("mmmmmmm" + message);
     if (!us || !token || !role) {
       //ElMessage.error('登录失败！' + message)
@@ -32,7 +32,7 @@ export class CommonService {
     const userStore = useUserStore();
     // 将角色和身份也一起传进SessionStorage
     userStore.setUserSessionStorage(us, role);
-        ElMessage.success('登录成功！')
+    ElMessage.success("登录成功！");
     // 账号密码一样就重置密码;
     if (user.account === user.password) {
       console.log("欸？");
@@ -42,16 +42,16 @@ export class CommonService {
     let path = "";
     switch (role) {
       case ADMIN:
-        path = '/admin'
-        break
+        path = "/admin";
+        break;
       case TEACHER:
-        console.log('老师嘛？')
-        path = '/teacher'
-        break
+        console.log("老师嘛？");
+        path = "/teacher/teacherhome";
+        break;
       case LABADMIN:
-        console.log('实验室管理员嘛？')
-        path = '/teacher'
-        break
+        console.log("实验室管理员嘛？");
+        path = "/teacher";
+        break;
     }
     router.push(path);
   };

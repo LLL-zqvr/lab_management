@@ -23,15 +23,38 @@ export interface User {
 }
 
 // 课程
-export interface Course {
-  section: number;
-  name: string;
-  clazz: string;
-}
 
+export interface Course {
+  id?: string;
+  name?: string;
+  quantity?: number;
+  semester?: string;
+  clazz?: string;
+  type?: number;
+  teacherId?: string;
+  experimentHour?: number;
+}
+//预约表
+export interface Appointment {
+  id?: string;
+  teacher?: string;
+  course?: string;
+  labId?: string;
+  labName?: string;
+  semester?: string;
+  nature?: string;
+  week?: number;
+  dayofweek?: number;
+  section?: number;
+}
 // 周
 export interface Week {
   week: number;
   weekofday: number;
   course?: Course[];
+}
+//预约表1(包含课程)
+export interface Courseappointment {
+  course: Course;
+  appointment: Appointment;
 }

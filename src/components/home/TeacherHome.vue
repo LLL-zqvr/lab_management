@@ -104,6 +104,7 @@
 import { ref, onMounted, toRefs } from "vue";
 import moment from "moment";
 import { weeks, weekofdays } from "@/mock/timetable";
+// import type { Courseappointment } from "@/types/index";
 
 //数据
 
@@ -207,16 +208,43 @@ chooseWeek(getWeek());
 
 //想实现的小设计：
 //1.当检测到是本周时，按钮的文本为“本周”
+// const coursetable = ref();
+// const getCourseService = async () => {
+//   try {
+//     const result = await useGet<Courseappointment[]>("teacher/coursetable");
+//     console.log("cccccccccc");
+//     console.log(result);
+//     coursetable.value = result;
+//     return result;
+//   } catch (error) {
+//     console.error("请求出现错误:", error);
+//   }
+// };
+// console.log(getCourseService());
+// console.log(coursetable.value);
 </script>
 
 <style scoped>
 /* 样式保持不变 */
+.timetable {
+  padding: 10px;
+  padding-top: 0;
+}
 .time-controller .el-button {
   /* margin-left: 10px; */
   /* margin-top: 20px; */
 }
 .time-controller .el-button > span {
-  size: 30px;
+  size: 20px;
+}
+.timetable td {
+  text-align: center;
+}
+.timetable p {
+  size: 14px;
+}
+.timetable-contain {
+  margin-top: 20px;
 }
 .course-box {
   background: blue;
@@ -234,8 +262,8 @@ chooseWeek(getWeek());
 }
 .course-box-background {
   background: grey;
-  width: 97px;
-  height: 223px;
+  width: 75px;
+  height: 120px;
   padding: 15px;
 }
 .el-button:active {
