@@ -115,7 +115,7 @@ const router = createRouter({
 //beforeEach()全局前置守卫
 router.beforeEach((to) => {
   console.log("这里是全局前置守卫！！");
-  console.log(to);
+  // console.log(to);
   // 断言，roles就是数组，防止其识别不出
   const roles = to.meta.roles as string[] | undefined;
   console.log(roles);
@@ -140,6 +140,7 @@ router.beforeEach((to) => {
         return "/labadmin";
       }
     }
+    console.log("你将要去" + to.path);
     return true;
   }
   console.log("到这里？");

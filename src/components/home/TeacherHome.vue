@@ -1,109 +1,8 @@
-<template>
-  <div class="timetable">
-    <div class="timetable-controller">
-      <el-button
-        class="el-button"
-        size="large"
-        style="margin-top: 20px; margin-left: 15px"
-        v-for="number in 19"
-        @click="chooseWeek(number), selectButton(number)"
-        type="primary"
-        :plain="number === selectedButton ? false : true"
-      >
-        第{{ number }}周
-      </el-button>
-    </div>
-    <div class="timetable-contain">
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th v-for="(weekOfDay1, index) in weekofdays" :key="index">
-              {{ "周" + numberToChinease(weekOfDay1 + 1, "week") }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- section1,index1指的是最左边的第几节(写死的) -->
-          <tr v-for="(section1, index1) in [1, 3, 5, 7, 9, 11]" :key="index1">
-            <td>
-              <p>
-                {{
-                  "第" +
-                  numberToChinease(section1) +
-                  numberToChinease(section1 + 1) +
-                  "节"
-                }}
-              </p>
-            </td>
-            <template
-              v-for="(section2, index2) in [1, 2, 3, 4, 5, 6, 7]"
-              :key="section2"
-            >
-              <td class="course-box-background">
-                {{ index1 }}
-                {{ section2 }}
-                <template v-for="(section3, index3) in weekSelectedRef">
-                  <div
-                    class="course-box"
-                    v-if="
-                      section2 &&
-                      section2 == section3.weekofday &&
-                      showData(index1 + 1, section3.weekofday) != null
-                    "
-                  >
-                    <p>{{ showData(index1 + 1, section3.weekofday)?.name }}</p>
-                    <p>{{ showData(index1 + 1, section3.weekofday)?.clazz }}</p>
-                    <p>
-                      {{ showData(index1 + 1, section3.weekofday)?.labName }}
-                    </p>
-                  </div>
-                </template>
-              </td>
-            </template>
-
-            <!-- section2,index2按列来算，如第一列都为0，第二列都为1 -->
-
-            <!-- <template v-for="(section2, index2) in weekSelectedRef">
-                <td
-                  class="course-box-background"
-                  v-if="true"
-                  :key="index2"
-                  :rowspan="
-                    showData(index2, index1 + 1).name &&
-                    showData(index2, index1).name ===
-                      showData(index2, index1 + 1).name
-                      ? 2
-                      : ''
-                  "
-                >
-                  <div class="course-box">
-                    <p>
-                      {{ showData(index2, index1).name }}
-                    </p>
-                    <p>
-                      {{ showData(index2, index1).clazz }}
-                    </p>
-                    <p>
-                      {{ showData(index2, index1).section }}
-                    </p>
-                  </div>
-                </td>
-              </template> -->
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <!-- <div v-for="(section2, index2) in weekSelectedRef" :key="index2">
-      {{ section2 }}
-    </div> -->
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted, toRefs } from "vue";
 import moment from "moment";
 import { weeks, weekofdays } from "@/mock/timetable";
+import { TeacherService } from "@/services/TeacherService";
 // import type { Courseappointment } from "@/types/index";
 
 //数据
@@ -224,27 +123,130 @@ const showData = (weekSection: number, weekOfDay: number) => {
 // onMounted(() => {
 // sortData();
 chooseWeek(getWeek());
+
 // });
 
 //合并相邻列
 
 //想实现的小设计：
 //1.当检测到是本周时，按钮的文本为“本周”
-// const coursetable = ref();
-// const getCourseService = async () => {
-//   try {
-//     const result = await useGet<Courseappointment[]>("teacher/coursetable");
-//     console.log("cccccccccc");
-//     console.log(result);
-//     coursetable.value = result;
-//     return result;
-//   } catch (error) {
-//     console.error("请求出现错误:", error);
-//   }
-// };
-// console.log(getCourseService());
-// console.log(coursetable.value);
+
+let datas = ref();
+
+async function fetchData() {
+  try {
+    datas.value = await TeacherService.listCoursesService();
+    console.log("**********");
+    console.log(datas.value);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+fetchData(); // 调用函数
 </script>
+
+<template>
+  <div class="timetable">
+    <div class="timetable-controller">
+      <el-button
+        class="el-button"
+        size="large"
+        style="margin-top: 20px; margin-left: 15px"
+        v-for="number in 19"
+        @click="chooseWeek(number), selectButton(number)"
+        type="primary"
+        :plain="number === selectedButton ? false : true"
+      >
+        第{{ number }}周
+      </el-button>
+    </div>
+    <div class="timetable-contain">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th v-for="(weekOfDay1, index) in weekofdays" :key="index">
+              {{ "周" + numberToChinease(weekOfDay1 + 1, "week") }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- section1,index1指的是最左边的第几节(写死的) -->
+          <tr v-for="(section1, index1) in [1, 3, 5, 7, 9, 11]" :key="index1">
+            <td>
+              <p>
+                {{
+                  "第" +
+                  numberToChinease(section1) +
+                  numberToChinease(section1 + 1) +
+                  "节"
+                }}
+              </p>
+            </td>
+            <template
+              v-for="(section2, index2) in [1, 2, 3, 4, 5, 6, 7]"
+              :key="section2"
+            >
+              <td class="course-box-background">
+                {{ index1 }}
+                {{ section2 }}
+                <template v-for="(section3, index3) in weekSelectedRef">
+                  <div
+                    class="course-box"
+                    v-if="
+                      section2 &&
+                      section2 == section3.weekofday &&
+                      showData(index1 + 1, section3.weekofday) != null
+                    "
+                  >
+                    <p>{{ showData(index1 + 1, section3.weekofday)?.name }}</p>
+                    <p>{{ showData(index1 + 1, section3.weekofday)?.clazz }}</p>
+                    <p>
+                      {{ showData(index1 + 1, section3.weekofday)?.labName }}
+                    </p>
+                  </div>
+                </template>
+              </td>
+            </template>
+
+            <!-- section2,index2按列来算，如第一列都为0，第二列都为1 -->
+
+            <!-- <template v-for="(section2, index2) in weekSelectedRef">
+                <td
+                  class="course-box-background"
+                  v-if="true"
+                  :key="index2"
+                  :rowspan="
+                    showData(index2, index1 + 1).name &&
+                    showData(index2, index1).name ===
+                      showData(index2, index1 + 1).name
+                      ? 2
+                      : ''
+                  "
+                >
+                  <div class="course-box">
+                    <p>
+                      {{ showData(index2, index1).name }}
+                    </p>
+                    <p>
+                      {{ showData(index2, index1).clazz }}
+                    </p>
+                    <p>
+                      {{ showData(index2, index1).section }}
+                    </p>
+                  </div>
+                </td>
+              </template> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- <div v-for="(section2, index2) in weekSelectedRef" :key="index2">
+      {{ section2 }}
+    </div> -->
+  </div>
+</template>
 
 <style scoped>
 /* 样式保持不变 */
