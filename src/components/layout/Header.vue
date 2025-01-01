@@ -109,7 +109,10 @@ function logout() {
   /* animation: jitter 0.5s linear forwards; */
   margin-bottom: 40px;
 }
-
+#emotion1 {
+  left: 6px;
+  top: 5px;
+}
 #emotion2 {
   display: none;
 }
