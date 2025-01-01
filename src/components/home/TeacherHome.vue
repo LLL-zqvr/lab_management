@@ -258,21 +258,24 @@ fetchData(); // 调用函数
   /* margin-left: 10px; */
   /* margin-top: 20px; */
 }
-.time-controller .el-button > span {
-  size: 20px;
-}
-.timetable td {
+/* .time-controller .el-button > span {
+  size: 12px;
+} */
+
+.timetable p,
+td {
+  font-size: 12px;
   text-align: center;
-}
-.timetable p {
-  size: 14px;
 }
 .timetable-contain {
   margin-top: 20px;
 }
 .course-box {
+  display: inline-block;
   background: blue;
 
+  width: 60%;
+  height: 60%;
   color: black;
 
   border-radius: 15px;
@@ -285,10 +288,11 @@ fetchData(); // 调用函数
   /* width: 20px; */
 }
 .course-box-background {
+  text-align: center;
   background: grey;
   width: 75px;
-  height: 120px;
-  padding: 15px;
+  height: 140px;
+  padding: 2px;
 }
 .el-button:active {
   color: aquamarine;

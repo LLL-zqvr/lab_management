@@ -99,8 +99,8 @@ const menulist: MenuItem[] = [
   </div>
 </template>
 <style scoped>
-#menu {
+/* #menu {
   height: 100vh;
   width: 200px;
-}
+} */
 </style>

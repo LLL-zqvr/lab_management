@@ -12,11 +12,11 @@ import { onMounted, ref } from "vue";
         <AdminHeader></AdminHeader>
       </el-header>
       <el-container>
-        <el-affix>
-          <el-aside width="200px">
-            <AdminMenu></AdminMenu>
-          </el-aside>
-        </el-affix>
+        <!-- <el-affix> -->
+        <el-aside width="200px">
+          <AdminMenu></AdminMenu>
+        </el-aside>
+        <!-- </el-affix> -->
         <el-main>
           <div class="fitsize"><RouterView></RouterView></div>
         </el-main>
@@ -32,7 +32,9 @@ import { onMounted, ref } from "vue";
   margin: 0;
 }
 #menu {
+  min-height: calc(100vh + 60px);
 }
+
 #header {
   background-color: #2b2c44;
   color: #fff;
@@ -49,12 +51,10 @@ import { onMounted, ref } from "vue";
 .el-aside {
   background-color: #2b2c44;
   width: 200px;
-  height: 100vh;
   margin-top: 60px;
-  /* min-height: calc(100vh - 60px); */
+  min-height: calc(100vh);
 }
 .el-main {
-  position: absolute;
   margin-top: 75px;
   left: 200px;
 }
