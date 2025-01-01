@@ -56,7 +56,14 @@ export class CommonService {
     router.push(path);
   };
 
-  //
+  //logout
+  static logoutService = async () => {
+    let userStore = useUserStore();
+    userStore.clean();
+    ElMessage.success("退出登录成功！");
+    router.push("/login");
+  };
+
   static updateSelfPassword = async (pwd: string) => {
     await usePatch("user/password", { password: pwd });
   };

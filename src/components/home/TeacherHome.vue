@@ -253,6 +253,7 @@ fetchData(); // 调用函数
 .timetable {
   padding: 10px;
   padding-top: 0;
+  width: 1000px;
 }
 .time-controller .el-button {
   /* margin-left: 10px; */
