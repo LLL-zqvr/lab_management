@@ -5,7 +5,7 @@
         class="el-button"
         size="large"
         style="margin-top: 20px; margin-left: 15px"
-        v-for="number in 18"
+        v-for="number in 19"
         @click="chooseWeek(number), selectButton(number)"
         type="primary"
         :plain="number === selectedButton ? false : true"
@@ -158,21 +158,43 @@ function chooseWeek(num: number) {
 //获取当前周
 function getWeek() {
   //获得当前日期是第几周的方法
+  // 现在是哪几年
   var year = new Date().getFullYear();
   // +是将字符串转成数字
-  var week = +moment(new Date()).format("E"); //获得今天是星期几
-  var startweek = +moment(new Date(year + "-09-01")).format("E"); //获得今年的9月1号是星期几
-  //今天到9月1号的时间戳之差
-  var millisDiff =
-    new Date(moment().format("yyyy-MM-DD")).getTime() -
-    new Date(year + "-09-01").getTime();
+  var weekofday = +moment(new Date()).format("E"); //获得今天是星期几
+  var startweek;
+  var millisDiff;
+  // 当前月
+  var month = +moment().format("MM");
+  // 如果是下半年学期，如2024年9月到2024年12月;则是9月开学
+  if (month >= 9 && month <= 12) {
+    startweek = +moment(new Date(year + "-09-01")).format("E"); //获得今年的9月1号是星期几
+    //今天到9月1号的时间戳之差
+    millisDiff =
+      new Date(moment().format("yyyy-MM-DD")).getTime() -
+      new Date(year + "-09-01").getTime();
+  }
+  // 下半年学期,2025年1月到2025年2月,则开始周就是从上一年（2024）的9月开始计算了
+  else if (month >= 1 && month <= 2) {
+    startweek = +moment(new Date(year - 1 + "-09-01")).format("E");
+    millisDiff =
+      new Date(moment().format("yyyy-MM-DD")).getTime() -
+      new Date(year - 1 + "-09-01").getTime();
+  } else {
+    //不然则是上半学期，如2025年3月到8月，3月初开学
+    startweek = +moment(new Date(year + "-03-01")).format("E"); //获得今年的3月1号是星期几
+    millisDiff =
+      new Date(moment().format("yyyy-MM-DD")).getTime() -
+      new Date(year + "-03-01").getTime();
+  }
+
   var days =
     (millisDiff -
-      week * (24 * 60 * 60 * 1000) -
+      weekofday * (24 * 60 * 60 * 1000) -
       (7 - startweek) * (24 * 60 * 60 * 1000)) /
     86400000;
   // console.log("现在是第" + days);
-  return days / 7 + 1;
+  return days / 7 + 2;
   //这里加的2代表的是本周和今年9月1号所在的那一周
 }
 
