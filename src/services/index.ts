@@ -21,6 +21,7 @@ export class CommonService {
     const us = resp.data.data;
     const token = resp.headers.token;
     const role = resp.headers.role;
+    const { id, name } = us;
     console.log(",,,," + role);
     const message = resp.data.message;
     //console.log("mmmmmmm" + message);
@@ -31,7 +32,7 @@ export class CommonService {
     sessionStorage.setItem("token", token);
     const userStore = useUserStore();
     // 将角色和身份也一起传进SessionStorage
-    userStore.setUserSessionStorage(us, role);
+    userStore.setUserSessionStorage(us, role, { id, name });
     ElMessage.success("登录成功！");
     // 账号密码一样就重置密码;
     if (user.account === user.password) {

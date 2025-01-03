@@ -58,3 +58,5 @@ export interface Courseappointment {
   course: Course;
   appointment: Appointment;
 }
+
+//

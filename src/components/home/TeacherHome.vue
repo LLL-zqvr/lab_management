@@ -2,16 +2,18 @@
 import { ref, onMounted } from "vue";
 import { useCalendarStore } from "@/stores/CalendarStore";
 import { TeacherService } from "@/services/TeacherService";
+import { ElMessageBox } from "element-plus";
 
 // 数据与状态
 const weekOfDays = [0, 1, 2, 3, 4, 5, 6]; // 一周天数
-const data = ref([]); // 后端课程数据
 const calendarStore = useCalendarStore();
 const currentWeek = calendarStore.getWeek(); // 当前周次
 
-const weeks: any = ref([]); // 所有周次数据
-const weekSelected = ref([]); // 当前选中周的课程数据
+const weeks = ref<any[]>([]); // 所有周次数据
+const weekSelected = ref<any[]>([]); // 当前选中课程数据
 const selectedButton = ref(currentWeek); // 当前选中的按钮
+const isTotalTable = ref(false); // 是否为总课表模式
+const modalData = ref<any[]>([]); // 模态框显示的课程数据
 
 // 将数字转换为中文
 const numberToChinese = (n: number, identifier?: string) => {
@@ -59,7 +61,6 @@ const fetchData = async () => {
         });
       }
     );
-
     weeks.value = Object.entries(weeksMap).map(([week, courses]) => ({
       week: Number(week),
       courses,
@@ -73,22 +74,51 @@ const fetchData = async () => {
 
 // 切换周次
 const chooseWeek = (week: number) => {
-  const selectedWeek = weeks.value.find((w: any) => w.week === week);
+  const selectedWeek: any = weeks.value.find((w: any) => w.week === week);
   weekSelected.value = selectedWeek ? selectedWeek.courses : [];
+  isTotalTable.value = false;
 };
 
-// 选择按钮
+// 显示所有课程
+const selectAll = () => {
+  selectedButton.value = 0; // 设置选中“总课表”按钮
+  weekSelected.value = weeks.value.flatMap((week: any) => week.courses); // 合并所有课程
+  isTotalTable.value = true; // 设置为总课表模式
+};
+
+// 根据周次切换
 const selectButton = (number: number) => {
   selectedButton.value = number;
   chooseWeek(number);
 };
 
-// 根据周次和节次筛选课程
-const showData = (weekSection: number, weekOfDay: number) => {
-  return weekSelected.value.find(
+// 获取指定格子的课程
+const getCellData = (weekSection: number, weekOfDay: number) => {
+  return weekSelected.value.filter(
     (course: any) =>
       course.dayofweek === weekOfDay && course.section === weekSection
   );
+};
+
+// 显示模态框
+const showModal = (weekSection: number, weekOfDay: number) => {
+  const cellData = getCellData(weekSection, weekOfDay);
+  if (cellData.length > 0) {
+    modalData.value = cellData;
+    ElMessageBox({
+      title: "课程详情",
+      message: `<div>
+        ${modalData.value
+          .map(
+            (course: any) =>
+              `<p>课程名：${course.name}<br>班级：${course.clazz}<br>实验室：${course.labName}</p><br>`
+          )
+          .join("")}
+      </div>`,
+      dangerouslyUseHTMLString: true,
+      confirmButtonText: "关闭",
+    });
+  }
 };
 
 // 初始化数据
@@ -98,6 +128,19 @@ onMounted(fetchData);
 <template>
   <div class="timetable">
     <div class="timetable-controller">
+      <!-- 总课表按钮 -->
+      <el-button
+        class="el-button"
+        size="large"
+        style="margin-top: 20px; margin-left: 15px"
+        :type="selectedButton === 0 ? 'primary' : 'default'"
+        :plain="selectedButton !== 0"
+        @click="selectAll"
+      >
+        总课表
+      </el-button>
+
+      <!-- 按周次选择按钮 -->
       <el-button
         v-for="number in 19"
         :key="number"
@@ -112,6 +155,7 @@ onMounted(fetchData);
       </el-button>
     </div>
 
+    <!-- 课表展示 -->
     <div class="timetable-contain">
       <table>
         <thead>
@@ -136,11 +180,23 @@ onMounted(fetchData);
               v-for="day in weekOfDays"
               :key="day"
               class="course-box-background"
+              @click="showModal(section, day + 1)"
             >
-              <div v-if="showData(section, day + 1)" class="course-box">
-                <p>{{ (showData(section, day + 1) as any)?.name }}</p>
-                <p>{{ (showData(section, day + 1) as any)?.clazz }}</p>
-                <p>{{ (showData(section, day + 1) as any)?.labName }}</p>
+              <div
+                v-if="getCellData(section, day + 1).length"
+                class="course-box"
+              >
+                <div
+                  v-for="course in getCellData(section, day + 1)"
+                  :key="course.name"
+                  class="course-item"
+                >
+                  <!-- {{ course.name }} | {{ course.clazz }} | {{ course.labName }} -->
+                  <p>{{ course.name }}</p>
+                  <p>{{ course.clazz }}</p>
+                  <p>{{ course.labName }}</p>
+                  <br />
+                </div>
               </div>
             </td>
           </tr>
@@ -170,12 +226,21 @@ td {
 .course-box {
   display: inline-block;
   background: blue;
-  width: 60%;
-  height: 60%;
+  width: 60px;
+  height: 100px;
   color: black;
   border-radius: 15px;
-  padding: 12px;
+  padding: 8px;
   text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.course-item {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .course-box-background {
   text-align: center;
@@ -183,6 +248,7 @@ td {
   width: 75px;
   height: 140px;
   padding: 2px;
+  cursor: pointer;
 }
 .el-button:focus {
   background: #409eff;
